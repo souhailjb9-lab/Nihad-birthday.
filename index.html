@@ -116,7 +116,7 @@
     </div>
 
     <script>
-        const targetDate = new Date("2026-08-02T20:30:00").getTime();
+        const targetDate = new Date("2026-08-02T20:41:00").getTime();
 
         function subtleFireworks() {
             if (!document.getElementById('main-container').classList.contains('hidden')) {
@@ -152,7 +152,6 @@
                 document.getElementById('main-container').classList.add('hidden');
                 document.getElementById('celebration-container').classList.remove('hidden');
                 
-                // تم حل المشكلة: المفرقعات ستعمل دائماً الآن عند الوصول للصفر
                 startFireworks();
                 return;
             }
@@ -170,7 +169,6 @@
         }
         updateTimer();
 
-        // كود تشغيل الصوت
         document.addEventListener("DOMContentLoaded", function() {
             const musicBtn = document.getElementById("startMusicBtn");
             const audio = document.getElementById("bdayAudio");
@@ -182,7 +180,7 @@
         });
     </script>
 
-    <!-- سكريبت ربط Firebase المحدث للمشروع -->
+    <!-- سكريبت ربط Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
@@ -202,11 +200,10 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         
-        // تفادي توقف السكريبت بسبب أدوات حجب الإعلانات (Ad-blockers)
         try {
             getAnalytics(app);
         } catch (e) {
-            console.warn("تم حجب Analytics ولكن الموقع سيعمل بشكل طبيعي.");
+            console.warn("Analytics blocked, continuing normal operation.");
         }
 
         const inputField = document.getElementById('friendNameInput');
@@ -214,6 +211,18 @@
         const friendsList = document.getElementById('friendsListDisplay');
         const listContainer = document.getElementById('listContainer');
         const namesRef = ref(database, 'nihad_celebrators');
+
+        // ==========================================
+        // تعديل مهم: التعرف على الزوار القدامى والجدد!
+        // ==========================================
+        if (localStorage.getItem('hasSubmitted') === 'true' || localStorage.getItem('nihad_guest_submitted') === 'true') {
+            inputField.disabled = true;
+            inputField.placeholder = "لقد قمت بإضافة اسمك مسبقاً ✨";
+            sendBtn.disabled = true;
+            sendBtn.style.opacity = '0.5';
+            sendBtn.style.cursor = 'not-allowed';
+            sendBtn.innerText = 'تم الإرسال';
+        }
 
         sendBtn.addEventListener('click', async () => {
             const name = inputField.value.trim();
@@ -242,19 +251,31 @@
                     return;
                 }
 
-                // محاولة الإرسال
+                // إرسال الاسم إلى قاعدة البيانات
                 await push(namesRef, { text: name });
                 
+                // قفل الحقل والزر فوراً بعد الإرسال الناجح بالكلمة السرية القديمة والجديدة
+                localStorage.setItem('hasSubmitted', 'true');
+                localStorage.setItem('nihad_guest_submitted', 'true');
+                
                 inputField.value = "";
+                inputField.disabled = true;
+                inputField.placeholder = "شكراً لمشاركتك! ✨";
+                
+                sendBtn.disabled = true;
+                sendBtn.style.opacity = '0.5';
+                sendBtn.style.cursor = 'not-allowed';
+                sendBtn.innerText = 'تم الإرسال';
+                
                 confetti({ particleCount: 50, spread: 70, origin: { y: 0.8 } });
 
             } catch (error) {
-                // إظهار رسالة تنبيه للمستخدم في حال كانت المشكلة من Firebase Rules
-                alert("تعذر الإرسال ❌\nيرجى التأكد من أن قواعد بياناتك في Firebase (Rules) تسمح بالكتابة (مضبوطة على true).");
+                alert("تعذر الإرسال ❌\nيرجى المحاولة مرة أخرى لاحقاً.");
                 console.error(error);
             }
         });
 
+        // جلب الأسماء وعرضها
         onValue(namesRef, (snapshot) => {
             friendsList.innerHTML = ""; 
             const emojis = ['🎉', '🎈', '✨', '🎂', '🥳', '🎁', '💖'];
