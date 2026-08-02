@@ -225,7 +225,7 @@
 
     <!-- سكريبت المؤقت الأساسي -->
     <script>
-        const targetDate = new Date("2026-08-02T19:37:00").getTime();
+        const targetDate = new Date("2026-08-02T19:51:00").getTime();
 
         function subtleFireworks() {
             if (!document.getElementById('main-container').classList.contains('hidden')) {
@@ -255,18 +255,31 @@
             const now = new Date().getTime();
             const distance = targetDate - now;
 
-            if (distance <= 0) {
-                if (countdownTimer) clearInterval(countdownTimer);
-                if (subtleInterval) clearInterval(subtleInterval);
-                document.getElementById('main-container').classList.add('hidden');
-                document.getElementById("bdayAudio").play();
-                document.getElementById('celebration-container').classList.remove('hidden');
-                if (!localStorage.getItem('nihadFireworksDone')) {
-                    startFireworks();
-                    localStorage.setItem('nihadFireworksDone', 'true');
-                }
-                return;
+                if (distance <= 0) {
+        if (countdownTimer) clearInterval(countdownTimer);
+        if (subtleInterval) clearInterval(subtleInterval);
+        
+        // إخفاء العداد وإظهار شاشة Happy Birthday
+        document.getElementById('main-container').classList.add('hidden');
+        document.getElementById('celebration-container').classList.remove('hidden');
+
+        // كود تشغيل الصوت الآمن (مع التكرار بفضل الـ HTML)
+        const audioEl = document.getElementById("bdayAudio");
+        if (audioEl) {
+            let playPromise = audioEl.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(function(error) {
+                    console.log("تم منع تشغيل الصوت تلقائياً بواسطة المتصفح");
+                });
             }
+        }
+
+        // تشغيل المفرقعات والاحتفال دائماً بدون أي قيود
+        startFireworks();
+        
+        return;
+                }
+            
 
             const d = Math.floor(distance / (1000 * 60 * 60 * 24));
             const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -431,7 +444,8 @@
         });
     </script>
 
-<audio id="bdayAudio" src="nina.mp3" preload="auto"></audio>
+<audio id="bdayAudio" src="nina.mp3" preload="auto" loop></audio>
+    
     
 
     
