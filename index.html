@@ -33,7 +33,7 @@
 
         /* حركة البالونات */
         .balloon-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .balloon { position: absolute; font-size: 3.5rem; animation: floatUp ease-in-out infinite; opacity: 0.8; bottom: -100px; will-change: transform; }
+        .balloon { position: absolute; font-size: 3.5rem; animation: floatUp ease-in-out infinite; opacity: 0.8; bottom: -100px; }
         .b1 { left: 10%; animation-duration: 7s; filter: drop-shadow(0 0 10px #ff007f); }
         .b2 { left: 80%; animation-duration: 9s; filter: drop-shadow(0 0 10px #ffd700); }
         .b3 { left: 25%; animation-duration: 12s; filter: drop-shadow(0 0 10px #00bfff); }
@@ -225,7 +225,7 @@
 
     <!-- سكريبت المؤقت الأساسي -->
     <script>
-        const targetDate = new Date("2026-08-07T00:00:00").getTime();
+        const targetDate = new Date("2026-08-02T18:58:00").getTime();
 
         function subtleFireworks() {
             if (!document.getElementById('main-container').classList.contains('hidden')) {
@@ -287,8 +287,12 @@
     </script>
 
     <!-- سكريبت ربط Firebase المحدث للمشروع -->
+
+        <!-- سكريبت ربط Firebase المحدث للمشروع -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        /* السطر الجديد الأول (استدعاء الإحصائيات) */
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
         import { getDatabase, ref, push, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
         // إعدادات Firebase
@@ -304,7 +308,10 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        /* السطر الجديد الثاني (تشغيل الإحصائيات) */
+        const analytics = getAnalytics(app);
         const database = getDatabase(app);
+
         
         const inputField = document.getElementById('friendNameInput');
         const sendBtn = document.getElementById('sendNameBtn');
