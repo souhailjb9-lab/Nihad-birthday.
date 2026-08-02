@@ -163,6 +163,14 @@
 
         /* شاشة الاحتفال */
         #celebration-container { text-align: center; }
+        <!-- ملف الصوت الخاص بك -->
+<audio id="bdayAudio" src="nina.mp3" preload="auto" loop></audio>
+
+<!-- زر تشغيل الصوت والاحتفال -->
+<button id="startMusicBtn" style="background-color: #ff69b4; color: white; padding: 15px 30px; border: none; border-radius: 25px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+    🎵 اضغط هنا لبدء الاحتفال 🎵
+</button>
+        
         .happy-birthday-text { font-family: 'Great Vibes', cursive; font-size: 5rem; color: #ffd700; text-shadow: 0 0 20px #ffdf00, 0 0 40px #ffae00; animation: pulseText 1.5s ease-in-out infinite alternate; margin-bottom: 20px; }
         @keyframes pulseText { from { transform: scale(1); text-shadow: 0 0 20px #ffdf00; } to { transform: scale(1.1); text-shadow: 0 0 40px #ffdf00, 0 0 60px #fff; } }
         .cake { font-size: 6rem; animation: bounceCake 2s ease-in-out infinite; filter: drop-shadow(0 0 15px #ff007f); }
@@ -225,7 +233,7 @@
 
     <!-- سكريبت المؤقت الأساسي -->
     <script>
-        const targetDate = new Date("2026-08-02T19:51:00").getTime();
+        const targetDate = new Date("2026-08-02T20:03:00").getTime();
 
         function subtleFireworks() {
             if (!document.getElementById('main-container').classList.contains('hidden')) {
@@ -255,32 +263,21 @@
             const now = new Date().getTime();
             const distance = targetDate - now;
 
-                if (distance <= 0) {
+                 if (distance <= 0) {
         if (countdownTimer) clearInterval(countdownTimer);
         if (subtleInterval) clearInterval(subtleInterval);
         
-        // إخفاء العداد وإظهار شاشة Happy Birthday
+        // إخفاء العداد وإظهار شاشة الاحتفال (والتي تحتوي الآن على الزر)
         document.getElementById('main-container').classList.add('hidden');
         document.getElementById('celebration-container').classList.remove('hidden');
 
-        // كود تشغيل الصوت الآمن (مع التكرار بفضل الـ HTML)
-        const audioEl = document.getElementById("bdayAudio");
-        if (audioEl) {
-            let playPromise = audioEl.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(function(error) {
-                    console.log("تم منع تشغيل الصوت تلقائياً بواسطة المتصفح");
-                });
-            }
-        }
-
-        // تشغيل المفرقعات والاحتفال دائماً بدون أي قيود
+        // تشغيل المفرقعات
         startFireworks();
         
         return;
-                }
+                 }
             
-
+            
             const d = Math.floor(distance / (1000 * 60 * 60 * 24));
             const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -442,6 +439,23 @@
 
             listContainer.scrollTop = listContainer.scrollHeight;
         });
+
+
+        // كود تشغيل الصوت عند الضغط على الزر
+document.addEventListener("DOMContentLoaded", function() {
+    const musicBtn = document.getElementById("startMusicBtn");
+    const audio = document.getElementById("bdayAudio");
+
+    if (musicBtn) {
+        musicBtn.addEventListener("click", function() {
+            if (audio) {
+                audio.play(); // تشغيل الصوت
+                this.style.display = "none"; // إخفاء الزر بعد الضغط لتبقى الشاشة جميلة
+            }
+        });
+    }
+});
+        
     </script>
 
 <audio id="bdayAudio" src="nina.mp3" preload="auto" loop></audio>
