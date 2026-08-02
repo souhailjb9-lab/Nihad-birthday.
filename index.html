@@ -225,7 +225,7 @@
 
     <!-- سكريبت المؤقت الأساسي -->
     <script>
-        const targetDate = new Date("2026-08-02T18:58:00").getTime();
+        const targetDate = new Date("2026-08-02T19:37:00").getTime();
 
         function subtleFireworks() {
             if (!document.getElementById('main-container').classList.contains('hidden')) {
@@ -259,6 +259,7 @@
                 if (countdownTimer) clearInterval(countdownTimer);
                 if (subtleInterval) clearInterval(subtleInterval);
                 document.getElementById('main-container').classList.add('hidden');
+                document.getElementById("bdayAudio").play();
                 document.getElementById('celebration-container').classList.remove('hidden');
                 if (!localStorage.getItem('nihadFireworksDone')) {
                     startFireworks();
@@ -429,6 +430,11 @@
             listContainer.scrollTop = listContainer.scrollHeight;
         });
     </script>
+
+<audio id="bdayAudio" src="nina.mp3" preload="auto"></audio>
+    
+
+    
 </body>
     </html>
     
