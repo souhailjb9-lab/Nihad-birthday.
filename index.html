@@ -2,467 +2,207 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nihad Birthday Countdown</title>
-    
-    <!-- استدعاء الخطوط (بما في ذلك خط Cairo لدعم العربية) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&family=Great+Vibes&family=Oswald:wght@400;500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Nihad</title>
     
     <!-- مكتبة المفرقعات -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
+        /* التنسيق الأساسي للموقع للحفاظ على جمالية الخط والتصميم */
+        body {
+            background-color: #111; /* خلفية داكنة */
+            color: white;
+            font-family: 'Impact', 'Arial Black', sans-serif; /* خط عريض وجميل مشابه للصورة */
+            text-align: center;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
         }
 
-        body {
-            background-color: #050505;
-            color: #fff;
-            font-family: 'Oswald', 'Cairo', sans-serif;
-            height: 100vh;
+        /* إخفاء العناصر غير النشطة */
+        .hidden {
+            display: none !important;
+        }
+
+        /* تنسيق شاشة العد التنازلي */
+        #main-container {
+            font-family: sans-serif;
+        }
+
+        #countdown-timer {
+            font-size: 2rem;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* تنسيق شاشة الاحتفال */
+        #celebration-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            position: relative;
+            z-index: 10;
         }
 
-        /* حركة البالونات */
-        .balloon-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .balloon { position: absolute; font-size: 3.5rem; animation: floatUp ease-in-out infinite; opacity: 0.8; bottom: -100px; }
-        .b1 { left: 10%; animation-duration: 7s; filter: drop-shadow(0 0 10px #ff007f); }
-        .b2 { left: 80%; animation-duration: 9s; filter: drop-shadow(0 0 10px #ffd700); }
-        .b3 { left: 25%; animation-duration: 12s; filter: drop-shadow(0 0 10px #00bfff); }
-        .b4 { left: 70%; animation-duration: 8s; filter: drop-shadow(0 0 10px #9933ff); }
-        
-        @keyframes floatUp {
-            0% { transform: translateY(0) rotate(-5deg); }
-            50% { transform: translateY(-55vh) rotate(5deg); }
-            100% { transform: translateY(-110vh) rotate(-5deg); }
+        #celebration-container h1 {
+            font-size: 3.5rem;
+            margin: 10px 0;
+            line-height: 1.2;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* الحاويات */
-        #main-container, #celebration-container { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; width: 100%; padding: 0 15px; transition: opacity 1s ease; }
-        .hidden { display: none !important; }
-
-        /* العنوان */
-        .title { font-family: 'Great Vibes', cursive; font-size: 4.5rem; color: #ffdf00; text-align: center; line-height: 1.2; margin-bottom: 20px; text-shadow: 0 0 10px #ffae00, 0 0 20px #ff8c00; animation: glow 2s ease-in-out infinite alternate; }
-        @keyframes glow {
-            from { text-shadow: 0 0 5px #ffae00, 0 0 10px #ff8c00; }
-            to { text-shadow: 0 0 20px #ffae00, 0 0 30px #ff8c00, 0 0 40px #ff4500; }
+        .cake-emoji {
+            font-size: 6rem;
+            margin-top: 20px;
+            margin-bottom: 30px;
         }
 
-        /* مربع المؤقت */
-        .timer-box { display: flex; justify-content: center; align-items: center; border: 2px solid #ffd700; border-radius: 15px; padding: 15px 10px; background: rgba(20, 20, 20, 0.8); box-shadow: 0 0 15px #ffd700, inset 0 0 10px #ffd700; width: 100%; max-width: 500px; margin-bottom: 20px; }
-        .time-section { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .time-section span.number { font-size: 3rem; font-weight: 500; line-height: 1.1; font-family: 'Oswald', sans-serif; }
-        .time-section span.label { font-size: 0.7rem; color: #ccc; margin-top: 5px; letter-spacing: 1px; }
-        .colon { font-size: 2rem; color: #fff; margin: 0 5px; padding-bottom: 15px; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .color-days { color: #ffeb99; text-shadow: 0 0 15px #ffcc00; }
-        .color-hours { color: #ff99cc; text-shadow: 0 0 15px #ff3399; }
-        .color-minutes { color: #99ccff; text-shadow: 0 0 15px #3399ff; }
-        .color-seconds { color: #cc99ff; text-shadow: 0 0 15px #9933ff; }
-
-        /* =========================================
-           تصميم قسم إضافة الأسماء
-           ========================================= */
-        .friends-section {
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        .friends-title {
-            font-size: 1.1rem;
-            color: #00bfff;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px #00bfff;
-        }
-
-        .input-group {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .input-group input {
-            padding: 10px 15px;
-            border-radius: 25px;
-            border: 1px solid #ff007f;
-            background: rgba(10, 10, 10, 0.7);
-            color: #fff;
-            font-family: 'Oswald', 'Cairo', sans-serif;
-            font-size: 1rem;
-            outline: none;
-            width: 70%;
-            box-shadow: inset 0 0 5px #ff007f;
-        }
-
-        .input-group input::placeholder { color: #aaa; }
-
-        .input-group button {
-            padding: 10px 20px;
-            border-radius: 25px;
+        /* تنسيق زر الصوت */
+        #startMusicBtn {
+            background-color: #ff69b4; /* لون وردي */
+            color: white;
+            padding: 15px 30px;
             border: none;
-            background: linear-gradient(45deg, #ff007f, #9933ff);
-            color: #fff;
-            font-family: 'Oswald', 'Cairo', sans-serif;
-            font-size: 1rem;
-            font-weight: 500;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            font-family: 'Arial', sans-serif; /* خط الزر واضح */
             cursor: pointer;
-            box-shadow: 0 0 10px #9933ff;
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+            transition: transform 0.2s;
+            z-index: 20;
         }
 
-        .input-group button:active { transform: scale(0.95); box-shadow: 0 0 5px #9933ff; }
-
-        .friends-list-container {
-            background: rgba(20, 20, 20, 0.5);
-            border: 1px solid #ffd700;
-            border-radius: 15px;
-            padding: 15px;
-            height: 120px;
-            overflow-y: auto; 
-            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2);
-            scrollbar-width: thin;
-            scrollbar-color: #ffd700 #222;
-        }
-
-        .friends-list-container::-webkit-scrollbar { width: 5px; }
-        .friends-list-container::-webkit-scrollbar-thumb { background-color: #ffd700; border-radius: 10px; }
-
-        .friends-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .friend-badge {
-            background: rgba(255, 223, 0, 0.15);
-            color: #ffdf00;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-family: 'Oswald', 'Cairo', sans-serif;
-            border: 1px solid #ffdf00;
-            box-shadow: 0 0 5px rgba(255, 223, 0, 0.5);
-            animation: popIn 0.3s ease-out;
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        /* شاشة الاحتفال */
-        #celebration-container { text-align: center; }
-        <!-- ملف الصوت الخاص بك -->
-<audio id="bdayAudio" src="nina.mp3" preload="auto" loop></audio>
-
-<!-- زر تشغيل الصوت والاحتفال -->
-<button id="startMusicBtn" style="background-color: #ff69b4; color: white; padding: 15px 30px; border: none; border-radius: 25px; font-size: 20px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
-    🎵 اضغط هنا لبدء الاحتفال 🎵
-</button>
-        
-        .happy-birthday-text { font-family: 'Great Vibes', cursive; font-size: 5rem; color: #ffd700; text-shadow: 0 0 20px #ffdf00, 0 0 40px #ffae00; animation: pulseText 1.5s ease-in-out infinite alternate; margin-bottom: 20px; }
-        @keyframes pulseText { from { transform: scale(1); text-shadow: 0 0 20px #ffdf00; } to { transform: scale(1.1); text-shadow: 0 0 40px #ffdf00, 0 0 60px #fff; } }
-        .cake { font-size: 6rem; animation: bounceCake 2s ease-in-out infinite; filter: drop-shadow(0 0 15px #ff007f); }
-        @keyframes bounceCake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-
-        /* دعم الهواتف */
-        @media (max-width: 450px) {
-            .title { font-size: 3.5rem; }
-            .time-section span.number { font-size: 2.2rem; }
-            .time-section span.label { font-size: 0.6rem; }
-            .colon { font-size: 1.5rem; margin: 0 2px; }
-            .timer-box { padding: 10px 5px; }
-            .happy-birthday-text { font-size: 4rem; }
-            .balloon { font-size: 2.5rem; }
-            .cake { font-size: 5rem; }
-            .input-group input { width: 65%; }
-            .friends-title { font-size: 1rem; }
+        #startMusicBtn:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
 
-    <div class="balloon-container" id="balloons">
-        <div class="balloon b1">🎈</div>
-        <div class="balloon b2">🎈</div>
-        <div class="balloon b3">🎈</div>
-        <div class="balloon b4">🎈</div>
-    </div>
-
+    <!-- ========================================== -->
+    <!-- شاشة العد التنازلي -->
+    <!-- ========================================== -->
     <div id="main-container">
-        <h1 class="title">Nihad<br>Birthday <br><span style="font-size: 2rem;">🎂 🎉</span></h1>
-        
-        <div class="timer-box">
-            <div class="time-section"><span id="days" class="number color-days">000</span><span class="label">DAYS</span></div><div class="colon">:</div>
-            <div class="time-section"><span id="hours" class="number color-hours">00</span><span class="label">HOURS</span></div><div class="colon">:</div>
-            <div class="time-section"><span id="minutes" class="number color-minutes">00</span><span class="label">MINUTES</span></div><div class="colon">:</div>
-            <div class="time-section"><span id="seconds" class="number color-seconds">00</span><span class="label">SECONDS</span></div>
-        </div>
-
-        <!-- الجزء الخاص بالأسماء -->
-        <div class="friends-section">
-            <p class="friends-title">Send your name to celebrate with Nihad ✨</p>
-            <div class="input-group">
-                <!-- إضافة dir="auto" ليتم ضبط اتجاه الكتابة حسب اللغة تلقائياً -->
-                <input type="text" id="friendNameInput" placeholder="Your name / اسمك..." maxlength="20" dir="auto">
-                <button id="sendNameBtn">Send</button>
-            </div>
-            <div class="friends-list-container" id="listContainer">
-                <div class="friends-list" id="friendsListDisplay">
-                    <!-- سيتم إضافة الأسماء هنا تلقائياً من Firebase -->
-                </div>
-            </div>
+        <h2>Countdown to Nihad's Birthday</h2>
+        <div id="countdown-timer">
+            <!-- سيتم تحديث هذه الأرقام بواسطة الجافاسكريبت -->
+            <span id="days">00</span>d : 
+            <span id="hours">00</span>h : 
+            <span id="minutes">00</span>m : 
+            <span id="seconds">00</span>s
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- شاشة الاحتفال (تظهر بعد انتهاء العداد) -->
+    <!-- ========================================== -->
     <div id="celebration-container" class="hidden">
-        <h1 class="happy-birthday-text">Happy Birthday<br>Nihad!</h1>
-        <div class="cake">🎂</div>
+        <h1>Happy<br>Birthday<br>Nihad!</h1>
+        <div class="cake-emoji">🎂</div>
+        
+        <!-- ملف الصوت -->
+        <audio id="bdayAudio" src="nina.mp3" preload="auto" loop></audio>
+        
+        <!-- زر تشغيل الصوت -->
+        <button id="startMusicBtn">🎵 اضغط هنا لبدء الاحتفال 🎵</button>
     </div>
 
-    <!-- سكريبت المؤقت الأساسي -->
+    <!-- ========================================== -->
+    <!-- أكواد الجافاسكريبت (العداد + المفرقعات + الصوت) -->
+    <!-- ========================================== -->
     <script>
-        const targetDate = new Date("2026-08-02T20:03:00").getTime();
+        // 1. ضع تاريخ ميلاد نهاد هنا بدقة
+        const targetDate = new Date("August 02, 2026 20:12:00").getTime(); 
 
-        function subtleFireworks() {
-            if (!document.getElementById('main-container').classList.contains('hidden')) {
-                confetti({ particleCount: 20, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: ['#ffdf00', '#ff007f'] });
-                confetti({ particleCount: 20, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: ['#00bfff', '#9933ff'] });
-            }
+        // إعدادات مكتبة المفرقعات
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
         }
 
+        // دالة المفرقعات القوية عند البداية
         function startFireworks() {
             const duration = 15 * 1000;
             const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
             const interval = setInterval(function() {
                 const timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
                 const particleCount = 50 * (timeLeft / duration);
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
         }
 
-        let subtleInterval;
-        let countdownTimer;
+        // دالة مفرقعات هادئة متكررة
+        function subtleFireworks() {
+            confetti({
+                particleCount: 20,
+                spread: 120,
+                origin: { y: 0.6 }
+            });
+        }
 
+        let countdownTimer;
+        let subtleInterval;
+
+        // دالة العداد التنازلي
         function updateTimer() {
             const now = new Date().getTime();
             const distance = targetDate - now;
 
-                 if (distance <= 0) {
-        if (countdownTimer) clearInterval(countdownTimer);
-        if (subtleInterval) clearInterval(subtleInterval);
-        
-        // إخفاء العداد وإظهار شاشة الاحتفال (والتي تحتوي الآن على الزر)
-        document.getElementById('main-container').classList.add('hidden');
-        document.getElementById('celebration-container').classList.remove('hidden');
+            // تحديث الأرقام على الشاشة (إذا كان العداد ما زال يعمل)
+            if (distance > 0) {
+                document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                document.getElementById("minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                document.getElementById("seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            } 
+            // عند انتهاء العداد
+            else {
+                if (countdownTimer) clearInterval(countdownTimer);
+                if (subtleInterval) clearInterval(subtleInterval);
+                
+                // إخفاء العداد وإظهار الاحتفال
+                document.getElementById('main-container').classList.add('hidden');
+                document.getElementById('celebration-container').classList.remove('hidden');
 
-        // تشغيل المفرقعات
-        startFireworks();
-        
-        return;
-                 }
-            
-            
-            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerText = d.toString().padStart(3, '0');
-            document.getElementById("hours").innerText = h.toString().padStart(2, '0');
-            document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
-            document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+                // تشغيل المفرقعات الكثيفة مرة واحدة
+                startFireworks();
+                
+                // تشغيل مفرقعات خفيفة كل 5 ثواني ليبقى الموقع حياً
+                setInterval(subtleFireworks, 5000);
+            }
         }
 
-        const initialNow = new Date().getTime();
-        if (targetDate - initialNow > 0) {
-            subtleInterval = setInterval(subtleFireworks, 2500);
-            countdownTimer = setInterval(updateTimer, 1000);
-        }
-        updateTimer();
-    </script>
+        // تشغيل العداد فور فتح الصفحة
+        countdownTimer = setInterval(updateTimer, 1000);
+        updateTimer(); // استدعاء فوري لتجنب التأخير لثانية واحدة
 
-    <!-- سكريبت ربط Firebase المحدث للمشروع -->
+        // 2. كود تشغيل الصوت والزر الآمن
+        document.addEventListener("DOMContentLoaded", function() {
+            const musicBtn = document.getElementById("startMusicBtn");
+            const audio = document.getElementById("bdayAudio");
 
-        <!-- سكريبت ربط Firebase المحدث للمشروع -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        /* السطر الجديد الأول (استدعاء الإحصائيات) */
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-        import { getDatabase, ref, push, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-        // إعدادات Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyCo2csN5fYJsJSJPLCR1b2L_p8rZ31Hbf0",
-            authDomain: "nihad-birthday.firebaseapp.com",
-            databaseURL: "https://nihad-birthday-default-rtdb.firebaseio.com",
-            projectId: "nihad-birthday",
-            storageBucket: "nihad-birthday.firebasestorage.app",
-            messagingSenderId: "847746934005",
-            appId: "1:847746934005:web:efb59a662b8429a57991bc",
-            measurementId: "G-4TN46C9RSW"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        /* السطر الجديد الثاني (تشغيل الإحصائيات) */
-        const analytics = getAnalytics(app);
-        const database = getDatabase(app);
-
-        
-        const inputField = document.getElementById('friendNameInput');
-        const sendBtn = document.getElementById('sendNameBtn');
-        const friendsList = document.getElementById('friendsListDisplay');
-        const listContainer = document.getElementById('listContainer');
-        
-        const namesRef = ref(database, 'nihad_celebrators');
-
-        // --- 1. التحقق عند الدخول ---
-        if (localStorage.getItem('hasSubmitted') === 'true') {
-            sendBtn.disabled = true;
-            sendBtn.style.opacity = '0.5'; 
-            sendBtn.style.cursor = 'not-allowed'; 
-            sendBtn.innerText = 'تم الإرسال'; 
-        }
-
-        // --- 2. المراقبة الذكية لزر الإرسال ---
-        onValue(namesRef, (snapshot) => {
-            const myKey = localStorage.getItem('submissionKey');
-            
-            if (myKey) {
-                let keyStillExists = false;
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        if (childSnapshot.key === myKey) {
-                            keyStillExists = true;
-                        }
-                    });
-                }
-                if (!keyStillExists) {
-                    localStorage.removeItem('hasSubmitted');
-                    localStorage.removeItem('submissionKey');
-                    
-                    sendBtn.disabled = false;
-                    sendBtn.style.opacity = '1';
-                    sendBtn.style.cursor = 'pointer';
-                    sendBtn.innerText = 'Send'; 
-                }
-            }
-        });
-
-        // --- 3. حدث الضغط على زر الإرسال ---
-        sendBtn.addEventListener('click', async () => {
-            const name = inputField.value.trim();
-
-            if (name === "") return;
-
-            const cleanName = name.toLowerCase();
-
-            // حظر اسم صاحبة العيد ميلاد
-            const blockedWords = ["nihad", "نهاد", "nehad"]; 
-            const isBlocked = blockedWords.some(word => cleanName.replace(/\s/g, '').includes(word));
-
-            if (isBlocked) {
-                alert("لا يمكنك إضافة اسم 'نهاد' هنا، فهي صاحبة عيد الميلاد!");
-                return; 
-            }
-
-            try {
-                // منع التكرار المطابق تماماً
-                const snapshot = await get(namesRef);
-                let nameExists = false;
-
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        const data = childSnapshot.val();
-                        const existingName = (data.text || data.name || "").trim().toLowerCase();
-                        if (existingName === cleanName) {
-                            nameExists = true;
-                        }
-                    });
-                }
-
-                if (nameExists) {
-                    alert("هذا الاسم موجود بالفعل في القائمة! يرجى إضافة اسمك العائلي أو لقب للتمييز.");
-                    return;
-                }
-
-                // إضافة الاسم بنجاح
-                const newNameRef = push(namesRef, { text: name });
-                localStorage.setItem('submissionKey', newNameRef.key); 
-
-                inputField.value = "";
-                confetti({ particleCount: 50, spread: 70, origin: { y: 0.8 } });
-
-                localStorage.setItem('hasSubmitted', 'true');
-                sendBtn.disabled = true;
-                sendBtn.style.opacity = '0.5'; 
-                sendBtn.style.cursor = 'not-allowed';
-                sendBtn.innerText = 'تم الإرسال'; 
-
-            } catch (error) {
-                console.error("حدث خطأ أثناء الاتصال بقاعدة البيانات:", error);
-            }
-        });
-
-        // دالة عرض الأسماء من قاعدة البيانات
-        onValue(namesRef, (snapshot) => {
-            friendsList.innerHTML = ""; 
-            const emojis = ['🎉', '🎈', '✨', '🎂', '🥳', '🎁', '💖'];
-            
-            if (snapshot.exists()) {
-                snapshot.forEach((childSnapshot) => {
-                    const data = childSnapshot.val();
-                    
-                    const newBadge = document.createElement('span');
-                    newBadge.className = 'friend-badge';
-                    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-                    
-                    newBadge.innerText = (data.text || data.name) + ' ' + randomEmoji;
-                    friendsList.appendChild(newBadge);
+            if (musicBtn) {
+                musicBtn.addEventListener("click", function() {
+                    if (audio) {
+                        audio.play(); // تشغيل الصوت
+                        this.style.display = "none"; // إخفاء الزر لتبقى الشاشة نظيفة
+                    }
                 });
             }
-
-            listContainer.scrollTop = listContainer.scrollHeight;
         });
-
-
-        // كود تشغيل الصوت عند الضغط على الزر
-document.addEventListener("DOMContentLoaded", function() {
-    const musicBtn = document.getElementById("startMusicBtn");
-    const audio = document.getElementById("bdayAudio");
-
-    if (musicBtn) {
-        musicBtn.addEventListener("click", function() {
-            if (audio) {
-                audio.play(); // تشغيل الصوت
-                this.style.display = "none"; // إخفاء الزر بعد الضغط لتبقى الشاشة جميلة
-            }
-        });
-    }
-});
-        
     </script>
-
-<audio id="bdayAudio" src="nina.mp3" preload="auto" loop></audio>
-    
-    
-
-    
 </body>
-    </html>
-    
+</html>
