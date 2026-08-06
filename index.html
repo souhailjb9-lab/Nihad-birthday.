@@ -168,11 +168,6 @@
         .cake { font-size: 6rem; animation: bounceCake 2s ease-in-out infinite; filter: drop-shadow(0 0 15px #ff007f); }
         @keyframes bounceCake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        /* زر الصوت الأنيق (تمت الإضافة هنا) */
-        #startMusicBtn { background: linear-gradient(45deg, #ff007f, #9933ff); color: #fff; padding: 12px 30px; border: none; border-radius: 30px; font-size: 1.2rem; font-family: 'Oswald', 'Cairo', sans-serif; font-weight: 500; cursor: pointer; box-shadow: 0 0 15px #ff007f, 0 0 20px #9933ff; margin-top: 30px; transition: transform 0.2s; animation: pulseBtn 2s infinite; }
-        #startMusicBtn:hover { transform: scale(1.05); box-shadow: 0 0 25px #ff007f, 0 0 35px #9933ff; }
-        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
         /* دعم الهواتف */
         @media (max-width: 450px) {
             .title { font-size: 3.5rem; }
@@ -185,7 +180,6 @@
             .cake { font-size: 5rem; }
             .input-group input { width: 65%; }
             .friends-title { font-size: 1rem; }
-            #startMusicBtn { font-size: 1rem; padding: 10px 25px; } /* تمت الإضافة للهواتف */
         }
     </style>
 </head>
@@ -227,15 +221,11 @@
     <div id="celebration-container" class="hidden">
         <h1 class="happy-birthday-text">Happy Birthday<br>Nihad!</h1>
         <div class="cake">🎂</div>
-        
-        <!-- تمت إضافة الصوت والزر هنا -->
-        <audio id="bdayAudio" src="nina.mp3" preload="auto" loop></audio>
-        <button id="startMusicBtn">🎵 اضغط هنا لبدء الاحتفال 🎵</button>
     </div>
 
     <!-- سكريبت المؤقت الأساسي -->
     <script>
-        const targetDate = new Date("2026-08-06T18:40:00").getTime();
+        const targetDate = new Date("2026-08-07T00:00:00").getTime();
 
         function subtleFireworks() {
             if (!document.getElementById('main-container').classList.contains('hidden')) {
@@ -294,20 +284,11 @@
             countdownTimer = setInterval(updateTimer, 1000);
         }
         updateTimer();
-
-        // كود تشغيل الصوت (تمت الإضافة هنا)
-        document.addEventListener("DOMContentLoaded", function() {
-            const musicBtn = document.getElementById("startMusicBtn");
-            const audio = document.getElementById("bdayAudio");
-            if (musicBtn) {
-                musicBtn.addEventListener("click", function() {
-                    if (audio) { audio.play(); this.style.display = "none"; }
-                });
-            }
-        });
     </script>
 
     <!-- سكريبت ربط Firebase المحدث للمشروع -->
+
+        <!-- سكريبت ربط Firebase المحدث للمشروع -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         /* السطر الجديد الأول (استدعاء الإحصائيات) */
@@ -449,4 +430,5 @@
         });
     </script>
 </body>
-</html>
+    </html>
+    
