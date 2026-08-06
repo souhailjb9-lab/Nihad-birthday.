@@ -168,6 +168,36 @@
         .cake { font-size: 6rem; animation: bounceCake 2s ease-in-out infinite; filter: drop-shadow(0 0 15px #ff007f); }
         @keyframes bounceCake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
+        /* =========================================
+           زر الصوت الأنيق 
+           ========================================= */
+        #startMusicBtn {
+            background: linear-gradient(45deg, #ff007f, #9933ff);
+            color: #fff;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-family: 'Oswald', 'Cairo', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff007f, 0 0 20px #9933ff;
+            margin-top: 30px;
+            transition: transform 0.2s;
+            animation: pulseBtn 2s infinite;
+        }
+
+        #startMusicBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #ff007f, 0 0 35px #9933ff;
+        }
+
+        @keyframes pulseBtn {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
         /* دعم الهواتف */
         @media (max-width: 450px) {
             .title { font-size: 3.5rem; }
@@ -221,6 +251,10 @@
     <div id="celebration-container" class="hidden">
         <h1 class="happy-birthday-text">Happy Birthday<br>Nihad!</h1>
         <div class="cake">🎂</div>
+        
+        <!-- زر تشغيل الصوت وملف الصوت المضافان هنا -->
+        <button id="startMusicBtn">🎵 تشغيل أغنية الاحتفال</button>
+        <audio id="ninaAudio" src="nina.mp3"></audio>
     </div>
 
     <!-- سكريبت المؤقت الأساسي -->
@@ -284,11 +318,24 @@
             countdownTimer = setInterval(updateTimer, 1000);
         }
         updateTimer();
+
+        // --- إعداد تشغيل الصوت عند الضغط على الزر ---
+        const musicBtn = document.getElementById('startMusicBtn');
+        const audio = document.getElementById('ninaAudio');
+
+        if (musicBtn && audio) {
+            musicBtn.addEventListener('click', function() {
+                audio.play().then(() => {
+                    // إطلاق ألعاب نارية إضافية احتفالاً بتشغيل الصوت
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }).catch(error => {
+                    console.error("خطأ في تشغيل الصوت:", error);
+                });
+            });
+        }
     </script>
 
     <!-- سكريبت ربط Firebase المحدث للمشروع -->
-
-        <!-- سكريبت ربط Firebase المحدث للمشروع -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         /* السطر الجديد الأول (استدعاء الإحصائيات) */
@@ -430,5 +477,4 @@
         });
     </script>
 </body>
-    </html>
-    
+</html>
